@@ -6,7 +6,7 @@ pkgdesc="Herramienta GUI para quemar imágenes ISO utilizando el comando dd"
 arch=('any')
 url="https://github.com/Nacho-Telmo/Sinergia"  # <--- Esta es la URL que faltaba
 license=('GPL')
-depends=('python')
+depends=('python' 'python-pyqt6')
 
 # Definimos los archivos locales que deben incluirse en el paquete
 source=('app.py' 'dd-burner.png')
