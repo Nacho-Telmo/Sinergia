@@ -7,24 +7,27 @@ arch=('any')
 license=('GPL')
 depends=('python')
 
+# Definimos los archivos locales que deben incluirse en el paquete
+source=('app.py' 'dd-burner.png')
+sha256sums=('SKIP' 'SKIP')
+
 package() {
-    # 1. Crear carpetas de destino (incluyendo la ruta estándar de iconos)
+    # 1. Crear directorios necesarios
     install -d "${pkgdir}/usr/lib/${pkgname}"
     install -d "${pkgdir}/usr/bin"
     install -d "${pkgdir}/usr/share/icons/hicolor/scalable/apps"
     install -d "${pkgdir}/usr/share/applications"
 
-    # 2. Instalar el script principal
-    find "${srcdir}" -type f -name "app.py" -exec install -m644 {} "${pkgdir}/usr/lib/${pkgname}/main.py" \;
+    # 2. Copiar archivos fuente al paquete
+    # Se utiliza "${srcdir}" porque makepkg mueve los archivos allí al compilar
+    cp "${srcdir}/app.py" "${pkgdir}/usr/lib/${pkgname}/main.py"
+    cp "${srcdir}/dd-burner.png" "${pkgdir}/usr/share/icons/hicolor/scalable/apps/dd-burner.png"
 
-    # 3. Instalar el icono en la ruta estándar (hicolor)
-    find "${srcdir}" -type f -name "dd-burner.png" -exec install -m644 {} "${pkgdir}/usr/share/icons/hicolor/scalable/apps/dd-burner.png" \;
-
-    # 4. Crear el ejecutable en /usr/bin
+    # 3. Crear el ejecutable en /usr/bin
     echo -e "#!/bin/sh\npython /usr/lib/${pkgname}/main.py" > "${pkgdir}/usr/bin/${pkgname}"
     chmod +x "${pkgdir}/usr/bin/${pkgname}"
 
-    # 5. Crear el archivo .desktop para el menú de aplicaciones
+    # 4. Crear el archivo .desktop
     cat <<EOF > "${pkgdir}/usr/share/applications/${pkgname}.desktop"
 [Desktop Entry]
 Name=Sinergia DD Burner
