@@ -7,22 +7,31 @@ arch=('any')
 license=('GPL')
 depends=('python')
 
-# Quitamos 'source' porque los archivos ya están en el repo de git del AUR
-source=()
-
 package() {
-    # Crear carpetas de destino
+    # 1. Crear carpetas de destino
     install -d "${pkgdir}/usr/lib/${pkgname}"
     install -d "${pkgdir}/usr/bin"
     install -d "${pkgdir}/usr/share/pixmaps"
+    install -d "${pkgdir}/usr/share/applications"
 
-    # Buscamos los archivos dentro de la carpeta de fuentes ($srcdir)
-    # Sea cual sea el nombre que git le haya dado a la carpeta
+    # 2. Buscar e instalar los archivos (usando find para ser flexible)
     find "${srcdir}" -type f -name "app.py" -exec install -m644 {} "${pkgdir}/usr/lib/${pkgname}/main.py" \;
     find "${srcdir}" -type f -name "dd-burner.png" -exec install -m644 {} "${pkgdir}/usr/share/pixmaps/dd-burner.png" \;
 
-    # Crear el ejecutable
+    # 3. Crear el ejecutable en /usr/bin
     echo -e "#!/bin/sh\npython /usr/lib/${pkgname}/main.py" > "${pkgdir}/usr/bin/${pkgname}"
     chmod +x "${pkgdir}/usr/bin/${pkgname}"
+
+    # 4. Crear archivo .desktop para el menú de aplicaciones
+    cat <<EOF > "${pkgdir}/usr/share/applications/${pkgname}.desktop"
+[Desktop Entry]
+Name=Sinergia DD Burner
+Comment=Herramienta para quemar imágenes DD
+Exec=${pkgname}
+Icon=dd-burner
+Terminal=false
+Type=Application
+Categories=Utility;System;
+EOF
 }
 
