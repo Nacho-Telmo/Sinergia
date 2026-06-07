@@ -41,3 +41,4 @@ Categories=Utility;
 Comment=Escribe ISOs a unidades USB de forma segura
 EOF
 }
+
