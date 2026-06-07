@@ -19,9 +19,13 @@ package() {
     install -d "${pkgdir}/usr/share/applications"
     install -d "${pkgdir}/usr/share/pixmaps"
 
-    # 2. Instalar el script de Python y el ícono desde el clon de Git
-    cp "${srcdir}/Sinergia/app.py" "${pkgdir}/usr/lib/${pkgname}/main.py"
-    install -m644 "${srcdir}/Sinergia/dd-burner.png" "${pkgdir}/usr/share/pixmaps/${pkgname}.png"
+    # 2. Copiar todo el código fuente al directorio de librería
+    cp -r "${srcdir}/Sinergia/"* "${pkgdir}/usr/lib/${pkgname}/"
+
+    # 3. Instalar el ícono si existe
+    if [ -f "${srcdir}/Sinergia/dd-burner.png" ]; then
+        install -m644 "${srcdir}/Sinergia/dd-burner.png" "${pkgdir}/usr/share/pixmaps/${pkgname}.png"
+    fi
 
     # 3. Crear el script lanzador en /usr/bin
     cat << 'EOF' > "${pkgdir}/usr/bin/${pkgname}"
