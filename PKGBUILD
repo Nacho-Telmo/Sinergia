@@ -8,33 +8,26 @@ url="https://github.com/Nacho-Telmo/Sinergia"
 license=('GPL3')
 depends=('python' 'python-pyqt6')
 makedepends=('git')
-# Descargamos directamente la rama principal (main) de tu GitHub
 source=("git+https://github.com/Nacho-Telmo/Sinergia.git")
-sha256sums=('SKIP') # Al usar Git directo, omitimos el hash estático
+sha256sums=('SKIP')
 
 package() {
-    # 1. Crear la estructura de directorios en el sistema ficticio de pacman
     install -d "${pkgdir}/usr/lib/${pkgname}"
     install -d "${pkgdir}/usr/bin"
     install -d "${pkgdir}/usr/share/applications"
     install -d "${pkgdir}/usr/share/pixmaps"
 
-    # 2. Copiar todo el código fuente al directorio de librería
-    cp -r "${srcdir}/Sinergia/"* "${pkgdir}/usr/lib/${pkgname}/"
+    install -m644 "${srcdir}/Sinergia/app.py" "${pkgdir}/usr/lib/${pkgname}/main.py"
+    cp -r "${srcdir}/Sinergia/assets" "${pkgdir}/usr/lib/${pkgname}/"
 
-    # 3. Instalar el ícono si existe
-    if [ -f "${srcdir}/Sinergia/dd-burner.png" ]; then
-        install -m644 "${srcdir}/Sinergia/dd-burner.png" "${pkgdir}/usr/share/pixmaps/${pkgname}.png"
-    fi
-
-    # 3. Crear el script lanzador en /usr/bin
     cat << 'EOF' > "${pkgdir}/usr/bin/${pkgname}"
 #!/bin/sh
 exec python /usr/lib/sinergia-dd-burner/main.py "$@"
 EOF
     chmod +x "${pkgdir}/usr/bin/${pkgname}"
 
-    # 4. Instalar el archivo de escritorio .desktop oficial
+    install -m644 "${srcdir}/Sinergia/dd-burner.png" "${pkgdir}/usr/share/pixmaps/${pkgname}.png"
+
     cat << EOF > "${pkgdir}/usr/share/applications/${pkgname}.desktop"
 [Desktop Entry]
 Name=Sinergia DD Burner
@@ -45,4 +38,3 @@ Categories=Utility;
 Comment=Escribe ISOs a unidades USB de forma segura
 EOF
 }
-
