@@ -1,40 +1,27 @@
-# Maintainer: Ignacio <Nacho-Telmo>
+# Maintainer: TuNombre <tuemail@ejemplo.com>
 pkgname=sinergia-dd-burner
 pkgver=1.0.0
 pkgrel=1
-pkgdesc="Grabador de imágenes ISO a unidades USB seguro y minimalista con interfaz oscura"
+pkgdesc="Herramienta para quemar imágenes DD"
 arch=('any')
-url="https://github.com/Nacho-Telmo/Sinergia"
-license=('GPL3')
-depends=('python' 'python-pyqt6')
-makedepends=('git')
-source=("git+https://github.com/Nacho-Telmo/Sinergia.git")
-sha256sums=('SKIP')
+license=('GPL')
+depends=('python')
+
+# Aquí indicamos que los archivos están en el repositorio (no en una carpeta sub-repositorio)
+source=('app.py' 'dd-burner.png')
+sha256sums=('SKIP' 'SKIP')
 
 package() {
+    # Crear carpetas necesarias
     install -d "${pkgdir}/usr/lib/${pkgname}"
     install -d "${pkgdir}/usr/bin"
-    install -d "${pkgdir}/usr/share/applications"
     install -d "${pkgdir}/usr/share/pixmaps"
 
-    install -m644 "${srcdir}/Sinergia/app.py" "${pkgdir}/usr/lib/${pkgname}/main.py"
-    cp -r "${srcdir}/Sinergia/assets" "${pkgdir}/usr/lib/${pkgname}/"
+    # Copiar archivos
+    install -m644 "${srcdir}/app.py" "${pkgdir}/usr/lib/${pkgname}/main.py"
+    install -m644 "${srcdir}/dd-burner.png" "${pkgdir}/usr/share/pixmaps/dd-burner.png"
 
-    cat << 'EOF' > "${pkgdir}/usr/bin/${pkgname}"
-#!/bin/sh
-exec python /usr/lib/sinergia-dd-burner/main.py "$@"
-EOF
+    # Crear lanzador ejecutable
+    echo -e "#!/bin/sh\npython /usr/lib/${pkgname}/main.py" > "${pkgdir}/usr/bin/${pkgname}"
     chmod +x "${pkgdir}/usr/bin/${pkgname}"
-
-    install -m644 "${srcdir}/Sinergia/dd-burner.png" "${pkgdir}/usr/share/pixmaps/${pkgname}.png"
-
-    cat << EOF > "${pkgdir}/usr/share/applications/${pkgname}.desktop"
-[Desktop Entry]
-Name=Sinergia DD Burner
-Exec=${pkgname}
-Icon=${pkgname}
-Type=Application
-Categories=Utility;
-Comment=Escribe ISOs a unidades USB de forma segura
-EOF
 }
