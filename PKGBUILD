@@ -11,17 +11,14 @@ depends=('python')
 source=()
 
 package() {
-    # Crear carpetas necesarias
     install -d "${pkgdir}/usr/lib/${pkgname}"
     install -d "${pkgdir}/usr/bin"
     install -d "${pkgdir}/usr/share/pixmaps"
 
-    # Copiamos desde el directorio de construcción ($startdir)
-    # que es donde 'makepkg' clona tu repo
-    install -m644 "${startdir}/app.py" "${pkgdir}/usr/lib/${pkgname}/main.py"
-    install -m644 "${startdir}/dd-burner.png" "${pkgdir}/usr/share/pixmaps/dd-burner.png"
+    # La carpeta 'Sinergia' es la que crea git al clonar
+    install -m644 "${srcdir}/Sinergia/app.py" "${pkgdir}/usr/lib/${pkgname}/main.py"
+    install -m644 "${srcdir}/Sinergia/dd-burner.png" "${pkgdir}/usr/share/pixmaps/dd-burner.png"
 
-    # Crear lanzador ejecutable
     echo -e "#!/bin/sh\npython /usr/lib/${pkgname}/main.py" > "${pkgdir}/usr/bin/${pkgname}"
     chmod +x "${pkgdir}/usr/bin/${pkgname}"
 }
