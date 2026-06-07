@@ -2,8 +2,13 @@ pkgbase = sinergia-dd-burner
 	pkgdesc = Herramienta para quemar imágenes DD
 	pkgver = 1.0.0
 	pkgrel = 1
+	url = https://github.com/Nacho-Telmo/Sinergia
 	arch = any
 	license = GPL
 	depends = python
+	source = app.py
+	source = dd-burner.png
+	sha256sums = SKIP
+	sha256sums = SKIP
 
 pkgname = sinergia-dd-burner
