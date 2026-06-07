@@ -1,5 +1,5 @@
 pkgbase = sinergia-dd-burner
-	pkgdesc = Herramienta para quemar imágenes DD
+	pkgdesc = Herramienta GUI para quemar imágenes ISO utilizando el comando dd
 	pkgver = 1.0.0
 	pkgrel = 1
 	url = https://github.com/Nacho-Telmo/Sinergia

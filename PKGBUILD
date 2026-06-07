@@ -2,7 +2,7 @@
 pkgname=sinergia-dd-burner
 pkgver=1.0.0
 pkgrel=1
-pkgdesc="Herramienta para quemar imágenes DD"
+pkgdesc="Herramienta GUI para quemar imágenes ISO utilizando el comando dd"
 arch=('any')
 url="https://github.com/Nacho-Telmo/Sinergia"  # <--- Esta es la URL que faltaba
 license=('GPL')
