@@ -5,9 +5,5 @@ pkgbase = sinergia-dd-burner
 	arch = any
 	license = GPL
 	depends = python
-	source = app.py
-	source = dd-burner.png
-	sha256sums = SKIP
-	sha256sums = SKIP
 
 pkgname = sinergia-dd-burner

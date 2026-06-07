@@ -7,9 +7,8 @@ arch=('any')
 license=('GPL')
 depends=('python')
 
-# Aquí indicamos que los archivos están en el repositorio (no en una carpeta sub-repositorio)
-source=('app.py' 'dd-burner.png')
-sha256sums=('SKIP' 'SKIP')
+# Quitamos 'source' porque los archivos ya están en el repo de git del AUR
+source=()
 
 package() {
     # Crear carpetas necesarias
@@ -17,11 +16,13 @@ package() {
     install -d "${pkgdir}/usr/bin"
     install -d "${pkgdir}/usr/share/pixmaps"
 
-    # Copiar archivos
-    install -m644 "${srcdir}/app.py" "${pkgdir}/usr/lib/${pkgname}/main.py"
-    install -m644 "${srcdir}/dd-burner.png" "${pkgdir}/usr/share/pixmaps/dd-burner.png"
+    # Copiamos desde el directorio de construcción ($startdir)
+    # que es donde 'makepkg' clona tu repo
+    install -m644 "${startdir}/app.py" "${pkgdir}/usr/lib/${pkgname}/main.py"
+    install -m644 "${startdir}/dd-burner.png" "${pkgdir}/usr/share/pixmaps/dd-burner.png"
 
     # Crear lanzador ejecutable
     echo -e "#!/bin/sh\npython /usr/lib/${pkgname}/main.py" > "${pkgdir}/usr/bin/${pkgname}"
     chmod +x "${pkgdir}/usr/bin/${pkgname}"
 }
+
