@@ -11,15 +11,17 @@ depends=('python')
 source=()
 
 package() {
+    # Crear carpetas de destino
     install -d "${pkgdir}/usr/lib/${pkgname}"
     install -d "${pkgdir}/usr/bin"
     install -d "${pkgdir}/usr/share/pixmaps"
 
-    # BUSCAMOS EN TODOS LADOS: Si está en src, en src/Sinergia o en src/sinergia-dd-burner
-    # Esta es una forma segura de encontrar el archivo sin importar el nombre de la carpeta:
-    find "${srcdir}" -name "app.py" -exec install -m644 {} "${pkgdir}/usr/lib/${pkgname}/main.py" \;
-    find "${srcdir}" -name "dd-burner.png" -exec install -m644 {} "${pkgdir}/usr/share/pixmaps/dd-burner.png" \;
+    # Buscamos los archivos dentro de la carpeta de fuentes ($srcdir)
+    # Sea cual sea el nombre que git le haya dado a la carpeta
+    find "${srcdir}" -type f -name "app.py" -exec install -m644 {} "${pkgdir}/usr/lib/${pkgname}/main.py" \;
+    find "${srcdir}" -type f -name "dd-burner.png" -exec install -m644 {} "${pkgdir}/usr/share/pixmaps/dd-burner.png" \;
 
+    # Crear el ejecutable
     echo -e "#!/bin/sh\npython /usr/lib/${pkgname}/main.py" > "${pkgdir}/usr/bin/${pkgname}"
     chmod +x "${pkgdir}/usr/bin/${pkgname}"
 }
