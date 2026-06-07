@@ -8,21 +8,23 @@ license=('GPL')
 depends=('python')
 
 package() {
-    # 1. Crear carpetas de destino
+    # 1. Crear carpetas de destino (incluyendo la ruta estándar de iconos)
     install -d "${pkgdir}/usr/lib/${pkgname}"
     install -d "${pkgdir}/usr/bin"
-    install -d "${pkgdir}/usr/share/pixmaps"
+    install -d "${pkgdir}/usr/share/icons/hicolor/scalable/apps"
     install -d "${pkgdir}/usr/share/applications"
 
-    # 2. Buscar e instalar los archivos (usando find para ser flexible)
+    # 2. Instalar el script principal
     find "${srcdir}" -type f -name "app.py" -exec install -m644 {} "${pkgdir}/usr/lib/${pkgname}/main.py" \;
-    find "${srcdir}" -type f -name "dd-burner.png" -exec install -m644 {} "${pkgdir}/usr/share/pixmaps/dd-burner.png" \;
 
-    # 3. Crear el ejecutable en /usr/bin
+    # 3. Instalar el icono en la ruta estándar (hicolor)
+    find "${srcdir}" -type f -name "dd-burner.png" -exec install -m644 {} "${pkgdir}/usr/share/icons/hicolor/scalable/apps/dd-burner.png" \;
+
+    # 4. Crear el ejecutable en /usr/bin
     echo -e "#!/bin/sh\npython /usr/lib/${pkgname}/main.py" > "${pkgdir}/usr/bin/${pkgname}"
     chmod +x "${pkgdir}/usr/bin/${pkgname}"
 
-    # 4. Crear archivo .desktop para el menú de aplicaciones
+    # 5. Crear el archivo .desktop para el menú de aplicaciones
     cat <<EOF > "${pkgdir}/usr/share/applications/${pkgname}.desktop"
 [Desktop Entry]
 Name=Sinergia DD Burner
