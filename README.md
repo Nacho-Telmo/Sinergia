@@ -11,4 +11,4 @@ yay -S sinergia-dd-burner
 # Con paru
 paru -S sinergia-dd-burner
 
-![Demostración de Sinergia DD Burner](./assets/demo.png)
+![Demostración de Sinergia DD Burner](demo.png)
