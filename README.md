@@ -11,4 +11,4 @@ yay -S sinergia-dd-burner
 # Con paru
 paru -S sinergia-dd-burner
 
-![Demostración de Sinergia DD Burner](demo.png)
+![Demostración de Sinergia DD Burner](https://github.com/Nacho-Telmo/Sinergia/raw/main/demo.png)
