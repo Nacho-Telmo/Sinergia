@@ -1,0 +1,14 @@
+## 📦 Instalación en Arch Linux (AUR)
+
+Podés instalar **Sinergia DD Burner** fácilmente utilizando tu helper de AUR favorito (como `yay` o `paru`).
+
+[![AUR version](https://img.shields.io/aur/version/sinergia-dd-burner?color=blue&logo=arch-linux)](https://aur.archlinux.org/packages/sinergia-dd-burner)
+
+```bash
+# Con yay
+yay -S sinergia-dd-burner
+
+# Con paru
+paru -S sinergia-dd-burner
+
+![Demostración de Sinergia DD Burner](./assets/demo.png)
