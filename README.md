@@ -1,4 +1,4 @@
-## 📸 Captura de sinergia-dd-bruner
+## 📸 Captura de sinergia-dd-burner
 ![Demostración de Sinergia DD Burner](https://github.com/Nacho-Telmo/Sinergia/raw/main/demo.png)
 
 ## 📦 Instalación en Arch Linux (AUR)
