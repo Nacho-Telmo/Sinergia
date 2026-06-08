@@ -1,4 +1,3 @@
-
 # Maintainer: Ignacio <Nacho-Telmo>
 pkgname=sinergia-dd-burner
 pkgver=1.0.0
@@ -8,7 +7,6 @@ arch=('any')
 url="https://github.com/Nacho-Telmo/Sinergia"
 license=('GPL3')
 depends=('python' 'python-pyqt6' 'coreutils')
-# Ahora listamos los archivos que deben estar en la raíz del repo
 source=("app.py" "dd-burner.png" "LICENSE")
 sha256sums=('SKIP' 'SKIP' 'SKIP')
 
