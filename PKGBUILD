@@ -18,6 +18,7 @@ package() {
     install -d "${pkgdir}/usr/bin"
     install -d "${pkgdir}/usr/share/icons/hicolor/scalable/apps"
     install -d "${pkgdir}/usr/share/applications"
+    install -d "$pkgdir/usr/share/licenses/$pkgname"
 
     # 2. Copiar archivos fuente al paquete
     # Se utiliza "${srcdir}" porque makepkg mueve los archivos allí al compilar
