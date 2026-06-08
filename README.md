@@ -1,3 +1,6 @@
+## 📸 Captura de sinergia-dd-bruner
+![Demostración de Sinergia DD Burner](https://github.com/Nacho-Telmo/Sinergia/raw/main/demo.png)
+
 ## 📦 Instalación en Arch Linux (AUR)
 
 Podés instalar **Sinergia DD Burner** fácilmente utilizando tu helper de AUR favorito (como `yay` o `paru`).
@@ -11,6 +14,5 @@ yay -S sinergia-dd-burner
 # Con paru
 paru -S sinergia-dd-burner
 ```
-## 📸 Captura de sinergia-dd-bruner
-![Demostración de Sinergia DD Burner](https://github.com/Nacho-Telmo/Sinergia/raw/main/demo.png)
+
 
