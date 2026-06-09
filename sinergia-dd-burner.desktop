@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Sinergia DD Burner
+Comment=Herramienta para quemar imágenes DD
+Exec=sinergia-dd-burner
+Icon=utilities-terminal
+Terminal=false
+Type=Application
+Categories=Utility;System;
