@@ -1,14 +1,18 @@
 name: Build DEB
+
 on:
   push:
     tags: ['v*']
+
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions: { contents: write }
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
-      - name: Build
+
+      - name: Build Package
         run: |
           mkdir -p package/DEBIAN package/usr/bin package/usr/share/sinergia-dd-burner
           cp app.py package/usr/share/sinergia-dd-burner/
@@ -16,6 +20,9 @@ jobs:
           chmod 755 package/usr/bin/sinergia-dd-burner
           echo -e "Package: sinergia-dd-burner\nVersion: 1.0.0\nArchitecture: all\nDepends: python3, python3-pyqt6\nMaintainer: Nacho\nDescription: Sinergia DD Burner" > package/DEBIAN/control
           dpkg-deb --build package sinergia-dd-burner_1.0.0.deb
+
       - uses: softprops/action-gh-release@v1
-        with: { files: sinergia-dd-burner_1.0.0.deb }
-        env: { GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} }
+        with:
+          files: sinergia-dd-burner_1.0.0.deb
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
