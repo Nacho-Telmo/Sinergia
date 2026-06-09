@@ -1,24 +1,19 @@
-name: Build DEB Package
-
-on: [push]
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Create DEB structure
+- name: Create DEB structure
         run: |
+          # Creamos la estructura de carpetas
           mkdir -p package/DEBIAN
           mkdir -p package/usr/bin
           mkdir -p package/usr/share/sinergia-dd-burner
+          
+          # Copiamos TU código real al paquete
           cp app.py package/usr/share/sinergia-dd-burner/
+          
+          # Creamos el lanzador en /usr/bin
           echo '#!/bin/bash' > package/usr/bin/sinergia-dd-burner
-          echo 'cd /usr/share/sinergia-dd-burner/' >> package/usr/bin/sinergia-dd-burner
-          echo 'python3 app.py "$@"' >> package/usr/bin/sinergia-dd-burner
+          echo 'python3 /usr/share/sinergia-dd-burner/app.py "$@"' >> package/usr/bin/sinergia-dd-burner
           chmod 755 package/usr/bin/sinergia-dd-burner
+          
+          # Creamos el archivo de control
           echo "Package: sinergia-dd-burner" > package/DEBIAN/control
           echo "Version: 1.0.0" >> package/DEBIAN/control
           echo "Section: utils" >> package/DEBIAN/control
@@ -27,12 +22,3 @@ jobs:
           echo "Depends: python3, python3-pyqt6" >> package/DEBIAN/control
           echo "Maintainer: Nacho-Telmo" >> package/DEBIAN/control
           echo "Description: Sinergia DD Burner" >> package/DEBIAN/control
-
-      - name: Build Package
-        run: dpkg-deb --build --root-owner-group package sinergia-dd-burner_1.0.0.deb
-
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: deb-package
-          path: sinergia-dd-burner_1.0.0.deb
