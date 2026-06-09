@@ -10,7 +10,9 @@ Podés instalar **Sinergia DD Burner** fácilmente utilizando tu helper de AUR f
 ```bash
 # Con yay
 yay -S sinergia-dd-burner
+```
 
+```bash
 # Con paru
 paru -S sinergia-dd-burner
 ```
