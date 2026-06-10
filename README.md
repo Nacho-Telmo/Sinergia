@@ -16,5 +16,17 @@ yay -S sinergia-dd-burner
 # Con paru
 paru -S sinergia-dd-burner
 ```
+## 📦Instalacion en Debian y derivadas
 
+![GitHub release](https://img.shields.io/github/v/release/Nacho-Telmo/Sinergia)
+
+1 Descarga el archivo .deb de la última versión en la sección de Releases.
+
+2 Abre tu terminal en la carpeta donde lo descargaste y ejecuta el siguiente comando: 
+
+```bash
+sudo apt install ./sinergia-dd-burner_*.deb
+```
+
+Remplaza el aterisco por el número de versión descargada.
 
