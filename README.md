@@ -28,5 +28,4 @@ paru -S sinergia-dd-burner
 sudo apt install ./sinergia-dd-burner_1.0.2.deb
 ```
 
-Remplaza el aterisco por el número de versión descargada.
 
