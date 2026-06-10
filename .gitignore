@@ -1,7 +1,16 @@
-pkg/
-src/
+# Archivos de empaquetado de Arch Linux
 *.pkg.tar.zst
+*.pkg.tar.xz
+
+# Logs y errores
 *.log
 error
-No
-*.log
+
+# Carpetas de desarrollo y compilación
+pkg/
+src/
+
+# Entorno virtual y caché de Python (muy importante)
+env_linux/
+__pycache__/
+*.pyc
