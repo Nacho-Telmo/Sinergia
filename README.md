@@ -25,7 +25,7 @@ paru -S sinergia-dd-burner
 2 Abre tu terminal en la carpeta donde lo descargaste y ejecuta el siguiente comando: 
 
 ```bash
-sudo apt install ./sinergia-dd-burner_1.0.2.deb
+sudo apt install ~/Descargas/sinergia-dd-burner_*.deb
 ```
 
 
