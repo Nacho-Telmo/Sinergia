@@ -16,7 +16,7 @@ yay -S sinergia-dd-burner
 # Con paru
 paru -S sinergia-dd-burner
 ```
-## 📦Instalacion en Debian y derivadas
+## 📦 Instalacion en Debian y derivadas
 
 ![GitHub release](https://img.shields.io/github/v/release/Nacho-Telmo/Sinergia)
 
