@@ -1,0 +1,10 @@
+name: Test Action
+on:
+  push:
+    branches:
+      - main
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Si lees esto, GitHub ya nos detectó"
