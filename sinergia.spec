@@ -6,7 +6,6 @@ BuildArch:      noarch
 License:        GPL
 URL:            https://github.com/Nacho-Telmo/Sinergia
 
-# Avisamos que el paquete SI O SI necesita PyQt6 de los repositorios
 Requires:       python3-pyqt6
 
 %description
@@ -19,7 +18,8 @@ mkdir -p %{_builddir}/%{name}-%{version}
 mkdir -p %{buildroot}/usr/bin
 mkdir -p %{buildroot}/usr/share/sinergia-dd-burner
 
-cp /root/rpmbuild/SOURCES/app.py %{buildroot}/usr/share/sinergia-dd-burner/
+# CORRECCIÓN: Usamos %{_sourcedir} en lugar de la ruta fija de /root
+cp %{_sourcedir}/app.py %{buildroot}/usr/share/sinergia-dd-burner/
 
 cat << 'INNER_EOF' > %{buildroot}/usr/bin/sinergia-dd-burner
 #!/bin/bash
@@ -34,4 +34,5 @@ chmod 755 %{buildroot}/usr/bin/sinergia-dd-burner
 
 %changelog
 * Tue Jun 16 2026 Nacho <nacho@sinergia> - 1.0.2-2
-- Agregada dependencia explícita de python3-pyqt6 para Ultramarine/Fedora.
+- Corregida ruta de SOURCES usando macros nativas de rpmbuild.
+- Agregada dependencia explícita de python3-pyqt6.
