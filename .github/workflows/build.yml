@@ -19,17 +19,24 @@ jobs:
 
       - name: Construir RPM con Docker
         run: |
-          # 1. Construir la imagen normalmente
+          # 1. Construir la imagen de Fedora
           docker build -t builder .
           
-          # 2. Crear una carpeta temporal en GitHub para recibir el paquete
+          # 2. Crear carpeta temporal para extraer archivos
           mkdir -p output
           
-          # 3. Correr el contenedor mapeando la carpeta actual e indicándole que copie el RPM directo afuera
-          docker run --rm -v ${{ github.workspace }}/output:/mnt/output builder /bin/bash -c "find /root/rpmbuild/RPMS -name '*.rpm' -exec cp {} /mnt/output/ \;"
+          # 3. INSPECCIÓN: Ver qué se creó realmente dentro de /root
+          echo "========================================================"
+          echo "=== Contenido detectado en /root/ dentro de la imagen ==="
+          echo "========================================================"
+          docker run --rm builder find /root -maxdepth 4 || echo "No se pudo escanear /root"
+          echo "========================================================"
           
-          # 4. Mover el RPM extraído a la raíz del proyecto para que sea visible
-          mv output/*.rpm . || echo "¡ALERTA! No se encontró ningún archivo .rpm en output"
+          # 4. Intentar buscar cualquier .rpm en TODO el contenedor y volcarlo afuera
+          docker run --rm -v ${{ github.workspace }}/output:/mnt/output builder /bin/bash -c "find / -name '*.rpm' -exec cp {} /mnt/output/ \;"
+          
+          # 5. Mover el paquete a la raíz si es que existe
+          mv output/*.rpm . || echo "¡ALERTA! El archivo RPM sigue sin existir dentro de la imagen"
 
       - name: Subir artefactos
         uses: actions/upload-artifact@v4
