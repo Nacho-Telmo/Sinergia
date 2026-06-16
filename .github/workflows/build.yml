@@ -11,27 +11,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Instalar dependencias
-        # Instalamos ruby para usar fpm
+      - name: Construir DEB (Local)
         run: |
-          sudo apt-get update
-          sudo apt-get install -y dpkg ruby ruby-dev rubygems build-essential
-          sudo gem install fpm
-
-      - name: Construir paquetes
-        run: |
-          # --- Construcción DEB ---
-          mkdir -p package/usr/bin package/usr/share/sinergia-dd-burner
+          mkdir -p package/DEBIAN package/usr/bin package/usr/share/sinergia-dd-burner
           cp app.py package/usr/share/sinergia-dd-burner/
           echo -e '#!/bin/bash\npython3 /usr/share/sinergia-dd-burner/app.py "$@"' > package/usr/bin/sinergia-dd-burner
           chmod 755 package/usr/bin/sinergia-dd-burner
-          # Usamos fpm para el DEB también, es mucho más limpio
-          fpm -s dir -t deb -n sinergia-dd-burner -v 1.0.2 --prefix / -C package .
+          echo -e "Package: sinergia-dd-burner\nVersion: 1.0.2\nArchitecture: all\nDepends: python3\nMaintainer: Nacho\nDescription: Sinergia DD Burner" > package/DEBIAN/control
+          dpkg-deb --build package sinergia-dd-burner_1.0.2.deb
 
-          # --- Construcción RPM ---
-          # Construimos el RPM directamente desde la estructura de carpetas
-          # Esto evita todo el proceso de rpmbuild y sus errores silenciosos
-          fpm -s dir -t rpm -n sinergia-dd-burner -v 1.0.2 --prefix / -C package .
+      - name: Construir RPM con Docker
+        run: |
+          # Esto construye la imagen en el servidor de GitHub
+          docker build -t builder .
+          # Esto crea un contenedor temporal para sacar el archivo
+          docker create -ti --name temp-container builder
+          docker cp temp-container:/root/rpmbuild/RPMS/noarch/sinergia-dd-burner-1.0.2-1.noarch.rpm .
+          docker rm temp-container
 
       - name: Subir artefactos
         uses: actions/upload-artifact@v4
