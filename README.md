@@ -28,4 +28,8 @@ paru -S sinergia-dd-burner
 sudo apt install ~/Descargas/sinergia-dd-burner_1.0.2.deb
 ```
 
+## 📦 Instalacion en Fedora, OpenSuse y derivadas
 
+```bash
+sudo dnf localinstall ~/Descargas/sinergia-dd-burner-1.0.2-4.noarch.rpm
+ ```
