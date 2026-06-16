@@ -1,32 +1,38 @@
 # --- Construcción RPM ---
-          mkdir -p rpmbuild/{SOURCES,SPECS,RPMS,BUILD,BUILDROOT}
-          
-          # Crear .spec simple usando la ruta absoluta al archivo fuente ($PWD)
-          cat <<EOF > rpmbuild/SPECS/sinergia.spec
-          Name: sinergia-dd-burner
-          Version: 1.0.2
-          Release: 1
-          Summary: Sinergia DD Burner
-          BuildArch: noarch
-          License: GPL
-          
-          %description
-          Sinergia DD Burner
-          
-          %install
-          # Usamos \$PWD para asegurar que siempre encuentre el archivo original
-          mkdir -p %{buildroot}/usr/bin
-          mkdir -p %{buildroot}/usr/share/sinergia-dd-burner
-          cp \$PWD/app.py %{buildroot}/usr/share/sinergia-dd-burner/
-          
-          echo '#!/bin/bash' > %{buildroot}/usr/bin/sinergia-dd-burner
-          echo 'python3 /usr/share/sinergia-dd-burner/app.py "\$@"' >> %{buildroot}/usr/bin/sinergia-dd-burner
-          chmod 755 %{buildroot}/usr/bin/sinergia-dd-burner
-          
-          %files
-          /usr/bin/sinergia-dd-burner
-          /usr/share/sinergia-dd-burner/app.py
-          EOF
-          
-          # Construir
-          rpmbuild --define "_topdir $PWD/rpmbuild" -ba rpmbuild/SPECS/sinergia.spec
+      mkdir -p rpmbuild/{SOURCES,SPECS,RPMS,BUILD,BUILDROOT}
+      
+      # Crear .spec usando un bloque de texto que no rompa la sintaxis YAML
+      cat << 'EOF' > rpmbuild/SPECS/sinergia.spec
+      Name: sinergia-dd-burner
+      Version: 1.0.2
+      Release: 1
+      Summary: Sinergia DD Burner
+      BuildArch: noarch
+      License: GPL
+      
+      %description
+      Sinergia DD Burner
+      
+      %install
+      mkdir -p %{buildroot}/usr/bin
+      mkdir -p %{buildroot}/usr/share/sinergia-dd-burner
+      cp $PWD/app.py %{buildroot}/usr/share/sinergia-dd-burner/
+      echo '#!/bin/bash' > %{buildroot}/usr/bin/sinergia-dd-burner
+      echo 'python3 /usr/share/sinergia-dd-burner/app.py "$@"' >> %{buildroot}/usr/bin/sinergia-dd-burner
+      chmod 755 %{buildroot}/usr/bin/sinergia-dd-burner
+      
+      %files
+      /usr/bin/sinergia-dd-burner
+      /usr/share/sinergia-dd-burner/app.py
+      EOF
+      
+      # Construir
+      rpmbuild --define "_topdir $PWD/rpmbuild" -ba rpmbuild/SPECS/sinergia.spec
+
+  - name: Subir artefactos
+    uses: actions/upload-artifact@v4
+    with:
+      name: paquetes-finales
+      path: |
+        *.deb
+        rpmbuild/RPMS/*/*.rpm
