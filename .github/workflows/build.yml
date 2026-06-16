@@ -26,12 +26,7 @@ jobs:
 
           # --- Construcción RPM ---
           mkdir -p rpmbuild/{SOURCES,SPECS,RPMS,BUILD,BUILDROOT}
-          mkdir -p rpm_package/usr/bin rpm_package/usr/share/sinergia-dd-burner
-          cp app.py rpm_package/usr/share/sinergia-dd-burner/
-          echo -e '#!/bin/bash\npython3 /usr/share/sinergia-dd-burner/app.py "$@"' > rpm_package/usr/bin/sinergia-dd-burner
-          chmod 755 rpm_package/usr/bin/sinergia-dd-burner
-          
-          cat <<EOF > rpmbuild/SPECS/sinergia.spec
+          cat << 'EOF' > rpmbuild/SPECS/sinergia.spec
           Name: sinergia-dd-burner
           Version: 1.0.2
           Release: 1
@@ -41,13 +36,20 @@ jobs:
           %description
           Sinergia DD Burner
           %install
-          cp -r \$GITHUB_WORKSPACE/rpm_package/* %{buildroot}
+          mkdir -p %{buildroot}/usr/bin
+          mkdir -p %{buildroot}/usr/share/sinergia-dd-burner
+          cp $GITHUB_WORKSPACE/app.py %{buildroot}/usr/share/sinergia-dd-burner/
+          echo '#!/bin/bash' > %{buildroot}/usr/bin/sinergia-dd-burner
+          echo 'python3 /usr/share/sinergia-dd-burner/app.py "$@"' >> %{buildroot}/usr/bin/sinergia-dd-burner
+          chmod 755 %{buildroot}/usr/bin/sinergia-dd-burner
           %files
           /usr/bin/sinergia-dd-burner
           /usr/share/sinergia-dd-burner/app.py
           EOF
           
           rpmbuild --define "_topdir $PWD/rpmbuild" -ba rpmbuild/SPECS/sinergia.spec
+          
+          echo "LISTADO COMPLETO DE ARCHIVOS RPM:"
           find . -name "*.rpm"
 
       - name: Subir artefactos
