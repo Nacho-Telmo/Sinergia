@@ -26,6 +26,8 @@ jobs:
 
           # --- Construcción RPM ---
           mkdir -p rpmbuild/{SOURCES,SPECS,RPMS,BUILD,BUILDROOT}
+          
+          # Creamos el spec indicando la ruta absoluta hacia el GITHUB_WORKSPACE
           cat << 'EOF' > rpmbuild/SPECS/sinergia.spec
           Name: sinergia-dd-burner
           Version: 1.0.2
@@ -40,7 +42,9 @@ jobs:
           %install
           mkdir -p %{buildroot}/usr/bin
           mkdir -p %{buildroot}/usr/share/sinergia-dd-burner
-          cp $PWD/app.py %{buildroot}/usr/share/sinergia-dd-burner/
+          # Usamos la variable de entorno GITHUB_WORKSPACE que GitHub nos provee
+          cp $GITHUB_WORKSPACE/app.py %{buildroot}/usr/share/sinergia-dd-burner/
+          
           echo '#!/bin/bash' > %{buildroot}/usr/bin/sinergia-dd-burner
           echo 'python3 /usr/share/sinergia-dd-burner/app.py "$@"' >> %{buildroot}/usr/bin/sinergia-dd-burner
           chmod 755 %{buildroot}/usr/bin/sinergia-dd-burner
