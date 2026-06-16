@@ -19,11 +19,18 @@ jobs:
 
       - name: Construir RPM con Docker
         run: |
+          # 1. Construimos la imagen de Fedora
           docker build -t builder .
-          mkdir -p output
-          docker run --rm -v ${{ github.workspace }}/output:/mnt/output builder /bin/bash -c "find / -name '*.rpm' ! -path '/mnt/output/*' -exec cp {} /mnt/output/ \;"
-          mv output/*.noarch.rpm . || echo "No se pudo mover el RPM final"
-          mv output/*.src.rpm . || echo "No se pudo mover el SRPM"
+          
+          # 2. Corremos el contenedor asignándole un nombre fijo ('mi-constructor')
+          docker run --name mi-constructor builder
+          
+          # 3. EXTRAER A LA FUERZA: Le robamos los archivos generados directamente de sus rutas internas
+          docker cp mi-constructor:/root/rpmbuild/RPMS/noarch/sinergia-dd-burner-1.0.2-1.noarch.rpm . || echo "No se encontró el RPM binario"
+          docker cp mi-constructor:/root/rpmbuild/SRPMS/sinergia-dd-burner-1.0.2-1.src.rpm . || echo "No se encontró el SRPM fuente"
+          
+          # 4. Limpieza del contenedor
+          docker rm mi-constructor
 
       - name: Subir artefactos
         uses: actions/upload-artifact@v4
