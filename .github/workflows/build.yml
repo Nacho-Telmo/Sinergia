@@ -29,13 +29,14 @@ jobs:
           mkdir -p ~/rpmbuild/BUILD/tmp_src
           cp app.py ~/rpmbuild/BUILD/tmp_src/
           
-          echo -e 'Name: sinergia-dd-burner\nVersion: 1.0.2\nRelease: 1\nSummary: Sinergia DD Burner\nLicense: GPL\n\n%description\nSinergia DD Burner\n\n%prep\n\n%install\ninstall -d %{buildroot}/usr/bin\ninstall -d %{buildroot}/usr/share/sinergia-dd-burner\ncp ~/rpmbuild/BUILD/tmp_src/app.py %{buildroot}/usr/share/sinergia-dd-burner/\necho -e "#!/bin/bash\npython3 /usr/share/sinergia-dd-burner/app.py \"\$@\"" > %{buildroot}/usr/bin/sinergia-dd-burner\nchmod 755 %{buildroot}/usr/bin/sinergia-dd-burner\n\n%files\n/usr/bin/sinergia-dd-burner\n/usr/share/sinergia-dd-burner/app.py' > ~/rpmbuild/SPECS/sinergia.spec
+          echo -e 'Name: sinergia-dd-burner\nVersion: 1.0.2\nRelease: 1\nSummary: Sinergia DD Burner\nBuildArch: noarch\nLicense: GPL\n\n%description\nSinergia DD Burner\n\n%prep\n\n%install\ninstall -d %{buildroot}/usr/bin\ninstall -d %{buildroot}/usr/share/sinergia-dd-burner\ncp ~/rpmbuild/BUILD/tmp_src/app.py %{buildroot}/usr/share/sinergia-dd-burner/\necho -e "#!/bin/bash\npython3 /usr/share/sinergia-dd-burner/app.py \"\$@\"" > %{buildroot}/usr/bin/sinergia-dd-burner\nchmod 755 %{buildroot}/usr/bin/sinergia-dd-burner\n\n%files\n/usr/bin/sinergia-dd-burner\n/usr/share/sinergia-dd-burner/app.py' > ~/rpmbuild/SPECS/sinergia.spec
           
-          rpmbuild -ba ~/rpmbuild/SPECS/sinergia.spec
+          # Ejecución con modo detallado y forzando error si no se crea el paquete
+          rpmbuild -v -ba ~/rpmbuild/SPECS/sinergia.spec || { echo "RPMBUILD FALLÓ"; exit 1; }
           
-          # --- PASO DE VERIFICACIÓN ---
-          echo "Buscando archivos RPM generados:"
-          find ~/rpmbuild/RPMS -name "*.rpm"
+          # Verificación recursiva de la carpeta de salida
+          echo "Contenido de la carpeta de resultados RPM:"
+          ls -R ~/rpmbuild/RPMS
 
       - name: Subir artefactos
         uses: actions/upload-artifact@v4
