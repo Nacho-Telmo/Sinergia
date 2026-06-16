@@ -17,13 +17,24 @@ jobs:
           echo -e "Package: sinergia-dd-burner\nVersion: 1.0.2\nArchitecture: all\nDepends: python3\nMaintainer: Nacho\nDescription: Sinergia DD Burner" > package/DEBIAN/control
           dpkg-deb --build package sinergia-dd-burner_1.0.2.deb
 
-      - name: Construir RPM con Docker
+      - name: Construir RPM de forma Nativa
         run: |
-          docker build -t builder .
-          docker run --name mi-constructor builder
-          docker cp mi-constructor:/root/rpmbuild/RPMS/noarch/sinergia-dd-burner-1.0.2-1.noarch.rpm . || echo "No se encontro el RPM binario"
-          docker cp mi-constructor:/root/rpmbuild/SRPMS/sinergia-dd-burner-1.0.2-1.src.rpm . || echo "No se encontro el SRPM fuente"
-          docker rm mi-constructor
+          # 1. Instalamos las herramientas de RPM directamente en la máquina virtual
+          sudo apt-get update && sudo apt-get install -y rpm devscripts
+
+          # 2. Creamos la estructura estándar de directorios
+          mkdir -p rpmbuild/{SOURCES,SPECS,RPMS,SRPMS,BUILD,BUILDROOT}
+
+          # 3. Copiamos los archivos a sus lugares correctos
+          cp app.py rpmbuild/SOURCES/
+          cp sinergia.spec rpmbuild/SPECS/
+
+          # 4. Compilamos el RPM usando rutas locales absolutas
+          rpmbuild --define "_topdir ${{ github.workspace }}/rpmbuild" -ba rpmbuild/SPECS/sinergia.spec
+
+          # 5. Sacamos los paquetes afuera para que los vea el cargador de artefactos
+          mv rpmbuild/RPMS/noarch/*.rpm . || echo "No se pudo mover el RPM binario"
+          mv rpmbuild/SRPMS/*.rpm . || echo "No se pudo mover el SRPM fuente"
 
       - name: Subir artefactos
         uses: actions/upload-artifact@v4
