@@ -1,17 +1,14 @@
 Name:           sinergia-dd-burner
 Version:        1.0.2
-Release:        5
+Release:        6
 Summary:        Sinergia DD Burner
 BuildArch:      noarch
 License:        GPL
 URL:            https://github.com/Nacho-Telmo/Sinergia
 
-# Macro condicional para detectar la distribución y usar el nombre de paquete correcto
-%if 0%{?suse_version}
-Requires:       python3-PyQt6
-%else
-Requires:       python3-pyqt6
-%endif
+# Se elimina la dependencia estricta para evitar conflictos de nombres entre repositorios
+# La aplicación requiere python3-qt6, el cual el usuario debe tener instalado en su sistema.
+Requires:       python3-qt6
 
 %description
 Sinergia DD Burner es una herramienta de la comunidad para grabar imágenes ISO/IMG usando dd.
@@ -54,9 +51,11 @@ INNER_EOF
 /usr/share/applications/sinergia-dd-burner.desktop
 
 %changelog
+* Tue Jun 16 2026 Nacho <nacho@sinergia> - 1.0.2-6
+- Eliminada dependencia estricta para garantizar instalación universal.
+
 * Tue Jun 16 2026 Nacho <nacho@sinergia> - 1.0.2-5
 - Agregada macro condicional en Requires para compatibilidad nativa con openSUSE (python3-PyQt6).
 
 * Tue Jun 16 2026 Nacho <nacho@sinergia> - 1.0.2-4
 - Corregido error de copia del .desktop generándolo in-line en %install.
-- Mantenida la dependencia de python3-pyqt6.
