@@ -1,20 +1,34 @@
-- name: Construir RPM con Docker
+name: CI/CD Packaging
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Construir DEB
         run: |
-          set -x
+          mkdir -p package/DEBIAN package/usr/bin package/usr/share/sinergia-dd-burner
+          cp app.py package/usr/share/sinergia-dd-burner/
+          echo -e '#!/bin/bash\npython3 /usr/share/sinergia-dd-burner/app.py "$@"' > package/usr/bin/sinergia-dd-burner
+          chmod 755 package/usr/bin/sinergia-dd-burner
+          echo -e "Package: sinergia-dd-burner\nVersion: 1.0.2\nArchitecture: all\nDepends: python3\nMaintainer: Nacho\nDescription: Sinergia DD Burner" > package/DEBIAN/control
+          dpkg-deb --build package sinergia-dd-burner_1.0.2.deb
+
+      - name: Construir RPM con Docker
+        run: |
           docker build -t builder .
-          # Lanzamos el contenedor en modo detached con un proceso infinito
-          docker run -d --name temp-container builder tail -f /dev/null
-          
-          # Ahora sí podemos ejecutar comandos dentro porque el contenedor está vivo
-          docker exec temp-container find /root/rpmbuild/RPMS -maxdepth 3
-          
-          RPM_PATH=$(docker exec temp-container find /root/rpmbuild/RPMS -name "*.rpm" | head -n 1)
-          
-          if [ -z "$RPM_PATH" ]; then
-            echo "¡ERROR! No se encontró el archivo .rpm"
-            exit 1
-          fi
-          
-          docker cp temp-container:$RPM_PATH .
-          docker stop temp-container
+          # Ejecutar contenedor y extraer RPM en un solo comando para evitar problemas de estado
+          docker run --name temp-container builder /bin/bash -c "find /root/rpmbuild/RPMS -name '*.rpm' -exec cp {} /root/ \;"
+          docker cp temp-container:/root/sinergia-dd-burner-1.0.2-1.noarch.rpm .
           docker rm temp-container
+
+      - name: Subir artefactos
+        uses: actions/upload-artifact@v4
+        with:
+          name: paquetes-finales
+          path: |
+            *.deb
+            *.rpm
