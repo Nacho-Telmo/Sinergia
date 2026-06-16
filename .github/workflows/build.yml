@@ -19,12 +19,17 @@ jobs:
 
       - name: Construir RPM con Docker
         run: |
+          # 1. Construir la imagen normalmente
           docker build -t builder .
-          # Ejecuta el contenedor y mueve CUALQUIER archivo .rpm a la carpeta raíz del contenedor
-          docker run --name temp-container builder /bin/bash -c "find /root/rpmbuild/RPMS -name '*.rpm' -exec cp {} /root/ \;"
-          # Copia TODO lo que terminó en /root/ del contenedor a nuestra carpeta actual
-          docker cp temp-container:/root/. .
-          docker rm temp-container
+          
+          # 2. Crear una carpeta temporal en GitHub para recibir el paquete
+          mkdir -p output
+          
+          # 3. Correr el contenedor mapeando la carpeta actual e indicándole que copie el RPM directo afuera
+          docker run --rm -v ${{ github.workspace }}/output:/mnt/output builder /bin/bash -c "find /root/rpmbuild/RPMS -name '*.rpm' -exec cp {} /mnt/output/ \;"
+          
+          # 4. Mover el RPM extraído a la raíz del proyecto para que sea visible
+          mv output/*.rpm . || echo "¡ALERTA! No se encontró ningún archivo .rpm en output"
 
       - name: Subir artefactos
         uses: actions/upload-artifact@v4
