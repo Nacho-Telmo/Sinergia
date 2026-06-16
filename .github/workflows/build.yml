@@ -1,43 +1,20 @@
-name: CI/CD Packaging
-
-on:
-  push:
-    branches:
-      - main
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Construir DEB
-        run: |
-          mkdir -p package/DEBIAN package/usr/bin package/usr/share/sinergia-dd-burner
-          cp app.py package/usr/share/sinergia-dd-burner/
-          echo -e '#!/bin/bash\npython3 /usr/share/sinergia-dd-burner/app.py "$@"' > package/usr/bin/sinergia-dd-burner
-          chmod 755 package/usr/bin/sinergia-dd-burner
-          echo -e "Package: sinergia-dd-burner\nVersion: 1.0.2\nArchitecture: all\nDepends: python3\nMaintainer: Nacho\nDescription: Sinergia DD Burner" > package/DEBIAN/control
-          dpkg-deb --build package sinergia-dd-burner_1.0.2.deb
-
-      - name: Construir RPM con Docker
+- name: Construir RPM con Docker
         run: |
           set -x
           docker build -t builder .
-          docker create -ti --name temp-container builder
-          docker exec temp-container find /root/rpmbuild -maxdepth 3
+          # Lanzamos el contenedor en modo detached con un proceso infinito
+          docker run -d --name temp-container builder tail -f /dev/null
+          
+          # Ahora sí podemos ejecutar comandos dentro porque el contenedor está vivo
+          docker exec temp-container find /root/rpmbuild/RPMS -maxdepth 3
+          
           RPM_PATH=$(docker exec temp-container find /root/rpmbuild/RPMS -name "*.rpm" | head -n 1)
+          
           if [ -z "$RPM_PATH" ]; then
             echo "¡ERROR! No se encontró el archivo .rpm"
             exit 1
           fi
+          
           docker cp temp-container:$RPM_PATH .
+          docker stop temp-container
           docker rm temp-container
-
-      - name: Subir artefactos
-        uses: actions/upload-artifact@v4
-        with:
-          name: paquetes-finales
-          path: |
-            *.deb
-            *.rpm
