@@ -1,43 +1,17 @@
-name: CI/CD Packaging
-
-on:
-  push:
-    branches:
-      - main
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Construir DEB
-        run: |
-          mkdir -p package/DEBIAN package/usr/bin package/usr/share/sinergia-dd-burner
-          cp app.py package/usr/share/sinergia-dd-burner/
-          echo -e '#!/bin/bash\npython3 /usr/share/sinergia-dd-burner/app.py "$@"' > package/usr/bin/sinergia-dd-burner
-          chmod 755 package/usr/bin/sinergia-dd-burner
-          echo -e "Package: sinergia-dd-burner\nVersion: 1.0.2\nArchitecture: all\nDepends: python3\nMaintainer: Nacho\nDescription: Sinergia DD Burner" > package/DEBIAN/control
-          dpkg-deb --build package sinergia-dd-burner_1.0.2.deb
-
-      - name: Construir RPM con Docker
+- name: Construir RPM con Docker
         run: |
           set -x
           docker build -t builder .
           docker create -ti --name temp-container builder
-          docker exec temp-container find /root/rpmbuild -maxdepth 3
-          RPM_PATH=$(docker exec temp-container find /root/rpmbuild/RPMS -name "*.rpm" | head -n 1)
-          if [ -z "$RPM_PATH" ]; then
-            echo "¡ERROR! No se encontró el archivo .rpm"
+          
+          # Intentamos construir y capturamos el error si falla
+          if ! docker exec temp-container rpmbuild -ba /root/rpmbuild/SPECS/sinergia.spec; then
+            echo "¡ERROR EN RPMBUILD!"
+            # Vemos qué hay en los logs de error de rpmbuild
+            docker exec temp-container cat /root/rpmbuild/BUILD/build.log || echo "No hay log de build"
             exit 1
           fi
+          
+          RPM_PATH=$(docker exec temp-container find /root/rpmbuild/RPMS -name "*.rpm" | head -n 1)
           docker cp temp-container:$RPM_PATH .
           docker rm temp-container
-
-      - name: Subir artefactos
-        uses: actions/upload-artifact@v4
-        with:
-          name: paquetes-finales
-          path: |
-            *.deb
-            *.rpm
