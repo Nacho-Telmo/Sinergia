@@ -24,8 +24,10 @@ jobs:
           echo -e "Package: sinergia-dd-burner\nVersion: 1.0.2\nArchitecture: all\nDepends: python3\nMaintainer: Nacho\nDescription: Sinergia DD Burner" > package/DEBIAN/control
           dpkg-deb --build package sinergia-dd-burner_1.0.2.deb
 
-      - name: Subir artefacto
+      - name: Subir todos los paquetes
         uses: actions/upload-artifact@v4
         with:
-          name: paquetes
-          path: "*.deb"
+          name: paquetes-instaladores
+          path: |
+            *.deb
+            ~/rpmbuild/RPMS/noarch/*.rpm
