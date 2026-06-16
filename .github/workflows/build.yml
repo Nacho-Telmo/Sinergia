@@ -20,9 +20,10 @@ jobs:
       - name: Construir RPM con Docker
         run: |
           docker build -t builder .
-          # Ejecutar contenedor y extraer RPM en un solo comando para evitar problemas de estado
+          # Ejecuta el contenedor y mueve CUALQUIER archivo .rpm a la carpeta raíz del contenedor
           docker run --name temp-container builder /bin/bash -c "find /root/rpmbuild/RPMS -name '*.rpm' -exec cp {} /root/ \;"
-          docker cp temp-container:/root/sinergia-dd-burner-1.0.2-1.noarch.rpm .
+          # Copia TODO lo que terminó en /root/ del contenedor a nuestra carpeta actual
+          docker cp temp-container:/root/. .
           docker rm temp-container
 
       - name: Subir artefactos
