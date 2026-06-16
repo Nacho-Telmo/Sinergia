@@ -1,6 +1,12 @@
-name: CI/CD Packaging
+name: CI/CD Packaging & Release
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -19,27 +25,36 @@ jobs:
 
       - name: Construir RPM de forma Nativa
         run: |
-          # 1. Instalamos las herramientas de RPM directamente en la máquina virtual
           sudo apt-get update && sudo apt-get install -y rpm devscripts
-
-          # 2. Creamos la estructura estándar de directorios
           mkdir -p rpmbuild/{SOURCES,SPECS,RPMS,SRPMS,BUILD,BUILDROOT}
-
-          # 3. Copiamos los archivos a sus lugares correctos
           cp app.py rpmbuild/SOURCES/
           cp sinergia.spec rpmbuild/SPECS/
-
-          # 4. Compilamos el RPM usando rutas locales absolutas
           rpmbuild --define "_topdir ${{ github.workspace }}/rpmbuild" -ba rpmbuild/SPECS/sinergia.spec
-
-          # 5. Sacamos los paquetes afuera para que los vea el cargador de artefactos
           mv rpmbuild/RPMS/noarch/*.rpm . || echo "No se pudo mover el RPM binario"
           mv rpmbuild/SRPMS/*.rpm . || echo "No se pudo mover el SRPM fuente"
 
-      - name: Subir artefactos
+      - name: Subir a los Artefactos (Por las dudas)
         uses: actions/upload-artifact@v4
         with:
           name: paquetes-finales
           path: |
             *.deb
             *.rpm
+
+      - name: Publicar automáticamente en GitHub Releases
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.2
+          name: "Sinergia DD Burner v1.0.2"
+          body: |
+            ### Sinergia DD Burner - Versión 1.0.2
+            ¡Nueva versión empaquetada oficialmente para la comunidad!
+            
+            **Paquetes incluidos:**
+            * `.deb` para Debian, Ubuntu, Linux Mint y derivados.
+            * `.rpm` para Fedora, Red Hat y derivados.
+          files: |
+            *.deb
+            *.rpm
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
