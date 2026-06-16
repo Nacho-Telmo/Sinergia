@@ -19,16 +19,9 @@ jobs:
 
       - name: Construir RPM con Docker
         run: |
-          # 1. Construir la imagen de Fedora
           docker build -t builder .
-          
-          # 2. Crear carpeta temporal externa
           mkdir -p output
-          
-          # 3. Buscar evitando la carpeta montada usando una sintaxis robusta
           docker run --rm -v ${{ github.workspace }}/output:/mnt/output builder /bin/bash -c "find / -name '*.rpm' ! -path '/mnt/output/*' -exec cp {} /mnt/output/ \;"
-          
-          # 4. Mover los paquetes a la raíz del proyecto para que GitHub los vea
           mv output/*.noarch.rpm . || echo "No se pudo mover el RPM final"
           mv output/*.src.rpm . || echo "No se pudo mover el SRPM"
 
