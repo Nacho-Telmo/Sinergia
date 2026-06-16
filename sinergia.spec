@@ -18,7 +18,6 @@ mkdir -p %{_builddir}/%{name}-%{version}
 mkdir -p %{buildroot}/usr/bin
 mkdir -p %{buildroot}/usr/share/sinergia-dd-burner
 
-# CORRECCIÓN: Usamos %{_sourcedir} en lugar de la ruta fija de /root
 cp %{_sourcedir}/app.py %{buildroot}/usr/share/sinergia-dd-burner/
 
 cat << 'INNER_EOF' > %{buildroot}/usr/bin/sinergia-dd-burner
