@@ -12,66 +12,26 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Instalar dependencias
-        run: sudo apt-get update && sudo apt-get install -y rpm dpkg
+        # Instalamos ruby para usar fpm
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y dpkg ruby ruby-dev rubygems build-essential
+          sudo gem install fpm
 
       - name: Construir paquetes
         run: |
           # --- Construcción DEB ---
-          mkdir -p package/DEBIAN package/usr/bin package/usr/share/sinergia-dd-burner
+          mkdir -p package/usr/bin package/usr/share/sinergia-dd-burner
           cp app.py package/usr/share/sinergia-dd-burner/
           echo -e '#!/bin/bash\npython3 /usr/share/sinergia-dd-burner/app.py "$@"' > package/usr/bin/sinergia-dd-burner
           chmod 755 package/usr/bin/sinergia-dd-burner
-          echo -e "Package: sinergia-dd-burner\nVersion: 1.0.2\nArchitecture: all\nDepends: python3\nMaintainer: Nacho\nDescription: Sinergia DD Burner" > package/DEBIAN/control
-          dpkg-deb --build package sinergia-dd-burner_1.0.2.deb
+          # Usamos fpm para el DEB también, es mucho más limpio
+          fpm -s dir -t deb -n sinergia-dd-burner -v 1.0.2 --prefix / -C package .
 
-          # --- Construcción RPM Manual ---
-          # 1. Crear estructura de archivos
-          mkdir -p build_rpm/usr/bin build_rpm/usr/share/sinergia-dd-burner
-          cp app.py build_rpm/usr/share/sinergia-dd-burner/
-          echo -e '#!/bin/bash\npython3 /usr/share/sinergia-dd-burner/app.py "$@"' > build_rpm/usr/bin/sinergia-dd-burner
-          chmod 755 build_rpm/usr/bin/sinergia-dd-burner
-          
-          # 2. Crear tarball necesario para rpmbuild
-          tar -cvzf sinergia-dd-burner-1.0.2.tar.gz -C build_rpm .
-          
-          # 3. Crear el .spec que apunte al tarball
-          mkdir -p ~/rpmbuild/{SOURCES,SPECS,RPMS}
-          cp sinergia-dd-burner-1.0.2.tar.gz ~/rpmbuild/SOURCES/
-          
-          cat << 'EOF' > ~/rpmbuild/SPECS/sinergia.spec
-          Name: sinergia-dd-burner
-          Version: 1.0.2
-          Release: 1
-          Summary: Sinergia DD Burner
-          BuildArch: noarch
-          License: GPL
-          Source0: sinergia-dd-burner-1.0.2.tar.gz
-
-          %description
-          Sinergia DD Burner
-
-          %prep
-          %setup -q -c
-
-          %install
-          mkdir -p %{buildroot}/usr/bin
-          mkdir -p %{buildroot}/usr/share/sinergia-dd-burner
-          cp -r usr/bin/* %{buildroot}/usr/bin/
-          cp -r usr/share/sinergia-dd-burner/* %{buildroot}/usr/share/sinergia-dd-burner/
-
-          %files
-          /usr/bin/sinergia-dd-burner
-          /usr/share/sinergia-dd-burner/app.py
-          EOF
-          
-          # 4. Construir
-          rpmbuild -ba ~/rpmbuild/SPECS/sinergia.spec
-          
-          # 5. Mover a la raíz para asegurar que se suba
-          cp ~/rpmbuild/RPMS/noarch/*.rpm .
-          
-          echo "Archivo final:"
-          ls -l *.rpm
+          # --- Construcción RPM ---
+          # Construimos el RPM directamente desde la estructura de carpetas
+          # Esto evita todo el proceso de rpmbuild y sus errores silenciosos
+          fpm -s dir -t rpm -n sinergia-dd-burner -v 1.0.2 --prefix / -C package .
 
       - name: Subir artefactos
         uses: actions/upload-artifact@v4
