@@ -30,6 +30,10 @@ sudo apt install ~/Descargas/sinergia-dd-burner_1.0.2.deb
 
 ## 📦 Instalacion en Fedora, OpenSuse y derivadas
 
+1 Descarga el archivo .deb de la última versión en la sección de Releases.
+
+2 Abre tu terminal en la carpeta Descargas y ejecuta el siguiente comando:
+
 ```bash
 sudo dnf localinstall ~/Descargas/sinergia-dd-burner-1.0.2-4.noarch.rpm
  ```
