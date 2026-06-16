@@ -35,5 +35,5 @@ sudo apt install ~/Descargas/sinergia-dd-burner_1.0.2.deb
 2 Abre tu terminal en la carpeta Descargas y ejecuta el siguiente comando:
 
 ```bash
-sudo dnf localinstall ~/Descargas/sinergia-dd-burner-1.0.2-4.noarch.rpm
+sudo dnf install -y ~/Descargas/sinergia-dd-burner-1.0.2-4.noarch.rpm
  ```
