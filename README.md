@@ -28,7 +28,7 @@ paru -S sinergia-dd-burner
 sudo apt install ~/Descargas/sinergia-dd-burner_1.0.2.deb
 ```
 
-## 📦 Instalacion en Fedora, OpenSuse y derivadas
+## 📦 Instalacion en Fedora y derivadas
 
 1 Descarga el archivo noarch.rpm de la última versión en la sección de Releases.
 
@@ -37,3 +37,13 @@ sudo apt install ~/Descargas/sinergia-dd-burner_1.0.2.deb
 ```bash
 sudo dnf install -y ~/Descargas/sinergia-dd-burner-1.0.2-4.noarch.rpm
  ```
+
+## 📦 Instalacion en OpenSuse y derivadas
+
+1 Descarga el archivo noarch.rpm de la última versión en la sección de Releases.
+
+2 Abre tu terminal en la carpeta Descargas y ejecuta el siguiente comando:
+
+```bash
+sudo zypper install ~/Descargas/sinergia-dd-burner-1.0.2-6.noarch.rpm
+```
